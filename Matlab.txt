@@ -1,0 +1,270 @@
+Experiment-1 Bode Plot
+
+% Bode Plot problem 1 on Matlab
+G=zpk([],[0 -2],10)
+bode(G)
+grid on
+[GM,PM,WCG,WPC]=margin(G)
+grid on
+if (PM>0 && GM>0)
+disp('System is stable ') 
+else  disp('system is unstable')
+end
+
+% Bode Plot problem 2&3 on Matlab
+G1=zpk([-2],[0 0 -5],50)
+G2=zpk([2],[0 0 -5],50)
+bode(G1,'r',G2,'g')
+grid on
+[GM1,PM1,WPC1,WGC1]=margin(G1)
+[GM2,PM2,WPC2,WGC2]=margin(G2)
+grid on
+if (WCG1<WPC1) 
+disp('System G1 is stable ') 
+else  disp('System G1 is unstable')
+end
+if (WCG2<WPC2) 
+disp('System G2 is stable ') 
+else  disp('System G2 is unstable')
+end
+
+% Bode Plot problem 4 on Matlab
+num=[9 1.8 9];
+den=[1 1.2 9 0];
+G=tf(num,den)
+bode(G)
+grid on
+[GM,PM,WPC,WCG]=margin(G)
+grid on
+if (WCG<WPC) 
+disp('System is stable ') 
+else  disp('system is unstable')
+end
+
+
+
+Experiment-2 RootLocus
+%Q1.(a)
+clc
+clear all;
+close all;
+% Root Locus Question N0 1
+G=zpk([],[0 -5 -10],[2]);
+rlocus(G);
+grid on;
+title('Root-Locus Plot of G(s)=2/s(s+5)(s+10)');
+
+%Q1.(b)
+clc;
+num =[1,6];
+den =[1,8,24,32,0];
+G = tf(num, den);
+rlocus(G)
+sgrid(0.5,[]);
+[k,r]=rlocfind(G);
+disp=("k="+k);
+disp("r=");
+disp(r);
+k=5.16;
+transfer=feedback(G,k)
+figure(3)
+stepinfo(transfer)
+step(transfer)
+figure(4)
+impulse(transfer)
+[y,t]=lsim(transfer,t,t);
+figure(5)
+plot(t,y)
+title("Unit Ramp Respone");
+
+
+% PID Controller
+
+
+clc;
+clear all;
+G=tf(25,[1,4,25]);
+Kp=5;
+Ki=1;
+Kd=2;
+%open loop step response
+figure(1)
+step(G)
+%close loop step response
+T=feedback(G,1,-1);
+figure(2)
+step(T)
+stepinfo(T)
+%proportional controller
+Tp=feedback(Kp*G,1,-1);
+hold on;
+step(Tp,'r')
+stepinfo(Tp)
+%PI controller
+s=tf('s');
+C=Kp+Ki/s;
+Tpi=feedback(C*G,1,-1);
+hold on;
+step(Tpi,'g')
+stepinfo(Tpi)
+%PID controller
+E=C+Kd*s;
+Tpid=feedback(E*G,1,-1);
+hold on;
+step(Tpid,'y')
+stepinfo(Tpid)
+legend;
+
+% Frequency response analysis of RC Network
+%Part 1
+clc;
+close all;
+clear all;
+fprintf('RC CIRCUIT FREQUENCY RESPONSE\nSoham Kundu\n 20192025\n');
+s=tf('s');
+Res=0.34;
+Cap=0.01*10^-6;G=1/ (Cap*Res*s+1);
+bode (G)
+title ('RC CIRCUIT FREQUENCY RESPONSE');
+grid on
+margin (G)
+[GM, PM, WCP, WCG] = margin (G);
+fprintf('GM = %f \n', GM) ;
+fprintf('PM = %f \n', PM);
+fprintf('WCG = %f \n', WCG) ;
+fprintf('WCP = %f \n', WCP);
+if (WCG<WCP)
+    fprintf('Given system is stable \n');
+elseif (WCG==WCP)
+    fprintf('Given system is marginally stable \n');
+else
+    fprintf(' Given system is unstable \n' );
+end
+
+%Part 2
+clc;close all; 
+s = tf('s'); R1 = 0.34; R2 = 0.51; %ASSUMED 
+C = 0.01*10^-6; G = -(R2/R1)/(1+(R2*C*s));%Assuming f=50Hz 
+bode(G)
+grid on; 
+[Gm1,Pm1,Wcp1,Wcg1] = margin(G); 
+disp('For RC Circuit Frequency Response (R1=0.340hm, R2=0.51 Ohm C =0.01uF): '); 
+disp(''); 
+fprintf('Gain Margin = %f \n', Gm1); 
+fprintf('Phase Margin = %f \n', Pm1); 
+fprintf('Gain Crossover Margin = %f \n', Wcg1); 
+fprintf('Phase Crossover Margin = %f \n', Wcp1); 
+title('RC Circuit Frequency Response (R1=0.34 Ohm, R2=0.51 Ohm C =0.01 uF)') 
+%checking stability 
+disp('');
+if (Wcg1 < Wcp1) 
+    fprintf('System is stable'); 
+elseif (Wcg1 == Wcp1) 
+    fprintf('system is marginal unstable'); 
+else
+    fprintf('system is unstable');
+end
+disp('');
+
+
+%Soham Kundu 20192025 EE2 Exp. No. 6
+%Q2
+
+clc;
+clear all;
+close all;
+
+%First-Order Inverting 
+
+R1 = 1000;
+R2 = (100e3);
+C = 10^-9;
+
+Gain = -R2/R1;
+wc = 1/ (R2*C);
+fc = wc/(2*pi);
+display (Gain);
+display (fc);
+
+s = tf('s');
+Gs = Gain*wc/(s+wc); %transfer function
+display(Gs);
+
+bode (Gs)
+
+% State Space Analysis
+
+clc;
+clear all;
+close all;
+
+A =[0 1 0; 0 0 1;-6 -11 -6];
+B=[0; 0; 1];
+C=[1 0 0];
+D = [0];
+SYS=ss(A,B,C,D);
+[b, a] = ss2tf(A,B,C,D);
+sysl=tf(b,a)
+step(sysl)
+stepinfo(sysl)
+Wc1=ctrb(SYS)
+Wc2=obsv(SYS)
+rC=rank(Wc1)
+if(rC==3)
+    display('controllable')
+else
+    display('uncontrollable')
+end
+rO=rank(Wc2)
+if(rO==3)
+    display('observable')
+else
+    display('non-observable')
+end
+
+
+
+% StepResponse
+
+clc;
+clear all;
+
+GsHs = tf(1,[1,1,-0.5]);
+
+Kp=5;
+Ki=1;
+Kd=2;
+
+%open-loop step response
+figure(1)
+step(GsHs)
+
+%close loop system
+T = feedback(GsHs,1,-1)
+figure(2)
+step(T)
+
+%proportional controller
+Tp = feedback(Kp*GsHs,1,-1)
+hold on;
+step(Tp,'r')
+
+%PI controller
+s = tf('s')
+C = Kp+Ki/s;
+Tpi = feedback(C*GsHs,1,-1)
+hold on;
+step(Tpi,'g')
+
+%PID CONTROLLER
+E = C + Kd*s;
+Tpid = feedback(E*GsHs,1,-1)
+hold on;
+step(Tpid,'y')
+
+
+
+
+
+
+
