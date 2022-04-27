@@ -1,0 +1,15 @@
+clc;
+clear all;
+
+G =zpk([],[0, -2],10)
+bode(G)
+
+[Gm,Pm,Wcp,Wcg]= margin(G)
+grid on;
+
+if Gm>0 && Pm>0
+    fprintf('SYSTEM IS STABLE');
+else
+    fprintf('SYSTEM NOT STABLE');
+end   
+    

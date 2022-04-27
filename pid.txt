@@ -1,0 +1,33 @@
+clc;
+clear all;
+G=tf(25,[1,4,25]);
+Kp=5;
+Ki=1;
+Kd=2;
+%open loop step response
+figure(1)
+step(G)
+%close loop step response
+T=feedback(G,1,-1);
+figure(2)
+step(T)
+stepinfo(T)
+%proportional controller
+Tp=feedback(Kp*G,1,-1);
+hold on;
+step(Tp,'r')
+stepinfo(Tp)
+%PI controller
+s=tf('s');
+C=Kp+Ki/s;
+Tpi=feedback(C*G,1,-1);
+hold on;
+step(Tpi,'g')
+stepinfo(Tpi)
+%PID controller
+E=C+Kd*s;
+Tpid=feedback(E*G,1,-1);
+hold on;
+step(Tpid,'y')
+stepinfo(Tpid)
+legend;

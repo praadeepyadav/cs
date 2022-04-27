@@ -1,0 +1,28 @@
+clc;
+clear all;
+close all;
+
+R = 0.34
+C = 0.01*10^-9;
+s = tf('s');
+Gs = 1/(R*C*s+1);
+display(Gs);
+damp(pole(Gs));
+
+bode(Gs)
+title('RC CIRCUIT FREQUENCY RESPONSE');
+grid on;
+
+[Gm,Pm,Wcp,Wcg] = margin(Gs);
+fprintf('Gain Margin =%f \n',Gm);
+fprintf('Phase Margin = %f \n',Pm);
+fprintf('Gain Crossover Frequency = %f \n',Wcp);
+fprintf('Phase Crossover Frequency = %f \n',Wcg);
+
+%Stability
+if Wcp>Wcg
+    fprintf('System is stable');
+else
+    fprintf('system is unstable');
+end
+

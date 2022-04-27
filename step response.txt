@@ -1,0 +1,35 @@
+clc;
+clear all;
+
+GsHs = tf(1,[1,1,-0.5]);
+
+Kp=5;
+Ki=1;
+Kd=2;
+
+%open-loop step response
+figure(1)
+step(GsHs)
+
+%close loop system
+T = feedback(GsHs,1,-1)
+figure(2)
+step(T)
+
+%proportional controller
+Tp = feedback(Kp*GsHs,1,-1)
+hold on;
+step(Tp,'r')
+
+%PI controller
+s = tf('s')
+C = Kp+Ki/s;
+Tpi = feedback(C*GsHs,1,-1)
+hold on;
+step(Tpi,'g')
+
+%PID CONTROLLER
+E = C + Kd*s;
+Tpid = feedback(E*GsHs,1,-1)
+hold on;
+step(Tpid,'y')

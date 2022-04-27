@@ -1,0 +1,23 @@
+clc;
+clear all;
+
+num = [1 6];
+den = [1 8 24 32 0];
+G = tf(num,den);
+
+rlocus(G)
+grid on;
+
+sys = feedback(G*5.16,1);
+
+figure(2)
+step(sys)
+stepinfo(sys)
+
+figure(3)
+impulse(sys)
+t=0:0.01:9;
+
+figure(4)
+lsim(sys,t,t)
+title('UNIT RAMP RESPONSE')

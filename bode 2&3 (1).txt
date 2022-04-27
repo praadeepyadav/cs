@@ -1,0 +1,26 @@
+clc;
+close all;
+
+G1 = zpk([-2], [0,0 -5], [50]);
+G2 = zpk([2], [0,0,-5], [50]);
+
+bode(G1,'r',G2,'g');
+grid on
+
+[gm1,pm1,wcp1,wcg1] = margin(G1)
+grid on;
+
+if wcp1>wcg1
+    fprintf('System is stable');
+else
+    fprintf('system is unstable');
+end
+
+[gm2,pm2,wcp2,wcg2] = margin(G2)
+grid on;
+
+if wcp2>wcg2
+    fprintf('System is stable ');
+else
+    fprintf('system is unstable');
+end
